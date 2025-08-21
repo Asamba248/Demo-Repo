@@ -1,2 +1,2 @@
-# Demo-Repo
+# PowerShell
 Demo Repo
