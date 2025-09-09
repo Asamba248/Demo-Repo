@@ -26,4 +26,24 @@ $inactiveUsers | Select-Object Name, SamAccountName, LastLogonDate | Export-Csv 
 
 # Filter disabled users
 $disabledUsers = $users | Where-Object { -not $_.Enabled }
-$disabledUsers | Select-Object Name, Enabled SamAccountName | Export-Csv -Path $disabledFile -NoTypeInformation
+$disabledUsers | Select-Object Name, Enabled, SamAccountName | Export-Csv -Path $disabledFile -NoTypeInformation
+
+#filter locked accounts
+$lockedUsers = Search-ADAccount -LockedOut | Select-Object Name, SamAccountName
+$lockedUsers | Export-Csv -Path $lockedFile -NoTypeInformation
+
+# Filter users with passwords expiring in next 15 days and export to CSV
+$maxPasswordAge = 90 # days
+$passwordExpiringUsers = $users | Where-Object {
+    ($_.PasswordLastSet -ne $null) -and
+    ($_.PasswordNeverExpires -eq $false) -and
+    ($_.PasswordLastSet -lt (Get-Date).AddDays(-($maxPasswordAge - 15)))
+}
+$passwordExpiringUsers | Select-Object Name, SamAccountName, PasswordLastSet | Export-Csv -Path $passwordExpiringFile -NoTypeInformation 
+# Summary
+Write-Host "Reports generated in $reportDir"
+Write-Host "- All Users: $allUsersFile"
+Write-Host "- Inactive Users: $inactiveFile"
+Write-Host "- Disabled Users: $disabledFile"
+Write-Host "- Locked Users: $lockedFile"
+Write-Host "- Passwords Expiring Soon: $passwordExpiringFile"
