@@ -16,4 +16,3 @@ $passwordExpiringFile = "$reportDir\PasswordExpiringSoon_$timestamp.csv"
 
 # Get all users in OU
 $users = Get-ADUser -SearchBase $OU -Filter * -Properties Name, SamAccountName, Enabled, LastLogonDate, PasswordNeverExpires, PasswordLastSet, AccountExpirationDate
-
