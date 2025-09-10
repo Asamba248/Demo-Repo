@@ -26,3 +26,4 @@ $importedProcesses | Format-Table -AutoSize
 
 Get-NetIPConfiguration | Select-Object InterfaceAlias, IPv4Address, @{Name='Status';Expression={(Get-NetAdapter -Name $_.InterfaceAlias).Status}}
 
+#
