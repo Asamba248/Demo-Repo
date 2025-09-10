@@ -6,4 +6,7 @@
 #>
 
 [CmdletBinding(SupportsShouldProcess)]
-
+param(
+  [string]$BaseOUName = 'Paris',
+  [string]$DomainDN = (Get-ADDomain).DistinguishedName
+)
