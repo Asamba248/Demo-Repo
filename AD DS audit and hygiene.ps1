@@ -1,5 +1,3 @@
-# Load AD module
-Import-Module ActiveDirectory
 
 # Define OU and output paths
 $OU = "OU=IT,DC=Adatum,DC=com"
