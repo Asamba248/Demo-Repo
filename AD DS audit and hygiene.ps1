@@ -1,3 +1,7 @@
+<# AD DS audit and hygiene script. This script retrieves
+various user account details from a specified OU in Active Directory and generates 
+reports on inactive accounts, disabled accounts, locked accounts, and accounts with passwords 
+expiring soon. The reports are exported to CSV files for further analysis. #>
 
 # Define OU and output paths
 $OU = "OU=IT,DC=Adatum,DC=com"
@@ -18,11 +22,11 @@ $users = Get-ADUser -SearchBase $OU -Filter * -Properties Name, SamAccountName, 
 # Export all users to CSV
 $users | Select-Object Name, SamAccountName, Enabled, LastLogonDate, PasswordNeverExpires, PasswordLastSet, AccountExpirationDate | Export-Csv -Path $allUsersFile -NoTypeInformation
 
-# Filter inactive users (not logged in for 90 days)
+# Filter inactive accounts (not logged in for 90 days)
 $inactiveUsers = $users | Where-Object { $_.LastLogonDate -lt (Get-Date).AddDays(-90) -or $_.LastLogonDate -eq $null }
 $inactiveUsers | Select-Object Name, SamAccountName, LastLogonDate | Export-Csv -Path $inactiveFile -NoTypeInformation
 
-# Filter disabled users
+# Filter disabled accounts
 $disabledUsers = $users | Where-Object { -not $_.Enabled }
 $disabledUsers | Select-Object Name, Enabled, SamAccountName | Export-Csv -Path $disabledFile -NoTypeInformation
 

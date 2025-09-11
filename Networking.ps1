@@ -16,7 +16,7 @@ for ($i = $startIP.GetAddressBytes()[3]; $i -le $endIP.GetAddressBytes()[3]; $i+
 $pingResults | Format-Table -AutoSize
 
 
-#export export network adapter information to a CSV file
+#export network adapter information to a CSV file
 $timestamp = Get-Date -Format "yyyy-MM-dd_HH-mm"
 $networkAdapters = Get-NetAdapter | Select-Object Name, Status, MacAddress, LinkSpeed , @{Name="IPAddresses";Expression={(Get-NetIPAddress -InterfaceAlias $_.Name).IPAddress}}
 $networkAdapters | Export-Csv -Path "C:\ADReports\NetworkAdapters_$timestamp.csv" -NoTypeInformation

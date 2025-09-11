@@ -16,10 +16,13 @@ $Users = @(
 $ouExists = Get-ADOrganizationalUnit -LDAPFilter "(ou=$OuName)" -SearchBase $DomainDN -SearchScope OneLevel -ErrorAction SilentlyContinue
 if (-not $ouExists) { New-ADOrganizationalUnit -Name $OuName -Path $DomainDN -ProtectedFromAccidentalDeletion $true }
 
-#prepares a default password for the new users and creates them in the specified OU
+#prepares a default password thar will be assigned to all users created.
 $defaultPwd = ConvertTo-SecureString 'P@ssw0rd123!' -AsPlainText -Force
+
+#reads the DNS root of the domain to create UPNs
 $dnsRoot    = (Get-ADDomain).DNSRoot
 
+#starts a for each loop that creates users using the details in the $Users array
 foreach ($u in $Users) {
   $sam  = $u.Sam
   $name = "$($u.First) $($u.Last)"  
@@ -29,6 +32,7 @@ foreach ($u in $Users) {
   New-ADUser -Name $name -GivenName $u.First -Surname $u.Last -SamAccountName $sam -UserPrincipalName $upn -AccountPassword $defaultPwd -ChangePasswordAtLogon $true -Enabled $true -Path $OuDN
                 }
 
+#Lists all users in the OU created 
 Get-ADUser -SearchBase $OuDN -LDAPFilter '(objectClass=user)' |
   Select-Object SamAccountName, Name |
   Sort-Object SamAccountName |
